@@ -16,6 +16,7 @@ public class PositionControl : MonoBehaviour {
     public static Vector3 YZ_NORMAL = Vector3.right;
     public static Vector3 XY_NORMAL = Vector3.forward;
     public static string GIMBLE_LAYER = "Gimble";
+    public static float MAX_DISTANCE = 100;
 
     public ObjectToMode[] objModeMapping;
 
@@ -43,9 +44,14 @@ public class PositionControl : MonoBehaviour {
             }
         } else if (Input.GetMouseButton(0) && movingGimble) {
             Vector3 targetProjectedPosition;
-            movingGimble = GetProjectedPosition(Input.mousePosition, storedMode, out targetProjectedPosition);
-            if (movingGimble) {
-                transform.position = storedPosition + (targetProjectedPosition - storedProjectedPosition);
+            bool success = GetProjectedPosition(Input.mousePosition, storedMode, out targetProjectedPosition);
+            if (success) {
+                Vector3 newPosition = storedPosition + (targetProjectedPosition - storedProjectedPosition);
+                if ((newPosition - storedPosition).sqrMagnitude <= MAX_DISTANCE * MAX_DISTANCE) {
+                    transform.position = newPosition;
+                } else {
+                    transform.position = storedPosition + (newPosition - storedPosition).normalized * MAX_DISTANCE;
+                }
             }
         } else if (Input.GetMouseButtonUp(0)) {
             movingGimble = false;
@@ -101,11 +107,10 @@ public class PositionControl : MonoBehaviour {
                 break;
         }
 
-        if (t == -1) {
+        if (t <= 0) {
             projectedPosition = Vector3.zero;
             return false;
-        }
-        else {
+        } else {
             projectedPosition = ray.origin + ray.direction * t;
             return true;
         }
@@ -117,31 +122,41 @@ public class PositionControl : MonoBehaviour {
     private bool GetAxisProjection(Vector3 screenPosition, Mode mode, out Vector3 projectedPosition) {
         Camera cam = Camera.main;
         Ray ray = cam.ScreenPointToRay(screenPosition);
-
-        float t = 0;
+        Vector3 normal, axis;
         switch (mode) {
             case Mode.X:
-                t = GetRayLineIntersection(transform.position, Vector3.right, ray.origin, ray.direction);
-                projectedPosition = transform.position + t * Vector3.right;
-                return true;
+                normal = XZ_NORMAL;
+                axis = Vector3.right;
+                break;
             case Mode.Y:
-                t = GetRayLineIntersection(transform.position, Vector3.up, ray.origin, ray.direction);
-                projectedPosition = transform.position + t * Vector3.up;
-                return true;
+                normal = XY_NORMAL;
+                axis = Vector3.up;
+                break;
             case Mode.Z:
-                t = GetRayLineIntersection(transform.position, Vector3.forward, ray.origin, ray.direction);
-                projectedPosition = transform.position + t * Vector3.forward;
-                return true;
+                normal = XZ_NORMAL;
+                axis = Vector3.forward;
+                break;
             default:
                 Debug.Log("This should never happen. Invalid mode detected: " + mode);
                 projectedPosition = Vector3.zero;
                 return false;
         }
+
+        float t = GetRayPlaneIntersection(transform.position, normal, ray.origin, ray.direction);
+        if (t > 0) {
+            Vector3 projectedPlane = ray.origin + ray.direction * t;
+            Vector3 linePlane = GetPointLineIntersection(projectedPlane, transform.position, axis);
+            projectedPosition = linePlane;
+            return true;
+        }
+
+        projectedPosition = Vector3.zero;
+        return false;
     }
 
     /**
      * Given mathematical descriptions of a plane and ray, output "t",
-     * the location on the ray where the intersection occurs.
+     * the parameterized location on the ray where the intersection occurs.
      * Return -1 if no intersection is found (to some epsilon of error).
      * https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-plane-and-ray-disk-intersection
      */
@@ -156,7 +171,7 @@ public class PositionControl : MonoBehaviour {
 
     /**
      * Given a line described by A and a ray described by B, output "t",
-     * the location on the ray that is closest to the line.
+     * the parameterized location on the ray that is closest to the line.
      */
     private float GetRayLineIntersection(Vector3 pA, Vector3 dirA, Vector3 pB, Vector3 dirB) {
         float b = Vector3.Dot(dirA, dirB);
@@ -166,7 +181,17 @@ public class PositionControl : MonoBehaviour {
         if (Mathf.Abs(denom) > 0.0001) {
             return c - b * f / denom;
         } else {
+            print("Reached");
             return 0;
         }
+    }
+
+    /**
+     * Given a line and point, output "t",
+     * the location on the line closest to the point.
+     */
+    private Vector3 GetPointLineIntersection(Vector3 point, Vector3 lineOrigin, Vector3 lineDirection) {
+        float t = Vector3.Dot(lineDirection, point - lineOrigin);
+        return lineOrigin + t * lineDirection;
     }
 }
