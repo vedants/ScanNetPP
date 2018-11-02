@@ -32,15 +32,23 @@ public class PositionControl : MonoBehaviour {
 	void Update () {
 		if (Input.GetMouseButtonDown(0)) {
             Camera cam = Camera.main;
-            // Run raycast against gimble elements.
             Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit, 100f, layer, QueryTriggerInteraction.Collide)) {
-                storedMode = FindMode(hit.collider.gameObject);
-                if (storedMode != Mode.NONE) {
-                    storedPosition = transform.position;
-                    movingGimble = GetProjectedPosition(Input.mousePosition, storedMode, out storedProjectedPosition);
+
+            RaycastHit[] hits;
+            hits = Physics.RaycastAll(ray, 100f, layer, QueryTriggerInteraction.Collide);
+            foreach (RaycastHit hit in hits) {
+                Mode mode = FindMode(hit.collider.gameObject);
+                if (mode == Mode.X || mode == Mode.Y || mode == Mode.Z) {
+                    storedMode = mode;
+                    break;
+                } else if (mode != Mode.NONE) {
+                    storedMode = mode;
                 }
+            }
+
+            if (storedMode != Mode.NONE) {
+                storedPosition = transform.position;
+                movingGimble = GetProjectedPosition(Input.mousePosition, storedMode, out storedProjectedPosition);
             }
         } else if (Input.GetMouseButton(0) && movingGimble) {
             Vector3 targetProjectedPosition;
