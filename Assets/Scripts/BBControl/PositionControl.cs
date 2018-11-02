@@ -18,39 +18,49 @@ public class PositionControl : MonoBehaviour {
     public static string GIMBLE_LAYER = "Gimble";
     public static float MAX_DISTANCE = 100;
 
+    public Material selectedMat;
     public ObjectToMode[] objModeMapping;
 
-    private int layer;
-    private bool movingGimble = false;
+    private int raycastLayer;
+    private bool moving = false;
+
+    // Blackboard Variables
     private Mode storedMode;
     private Vector3 storedPosition, storedProjectedPosition;
+    private GameObject storedGizmoObj;
+    private Material storedMat;
 
 	void Start () {
-		layer = LayerMask.GetMask(GIMBLE_LAYER);
+		raycastLayer = LayerMask.GetMask(GIMBLE_LAYER);
+        storedMode = Mode.NONE;
     }
 	
 	void Update () {
-		if (Input.GetMouseButtonDown(0)) {
+        if (Input.GetMouseButtonDown(0)) {
             Camera cam = Camera.main;
             Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-
             RaycastHit[] hits;
-            hits = Physics.RaycastAll(ray, 100f, layer, QueryTriggerInteraction.Collide);
+            hits = Physics.RaycastAll(ray, 100f, raycastLayer, QueryTriggerInteraction.Collide);
             foreach (RaycastHit hit in hits) {
-                Mode mode = FindMode(hit.collider.gameObject);
+                Mode mode = FindModeFromObj(hit.collider.gameObject);
                 if (mode == Mode.X || mode == Mode.Y || mode == Mode.Z) {
                     storedMode = mode;
+                    storedGizmoObj = hit.collider.gameObject;
                     break;
-                } else if (mode != Mode.NONE) {
+                }
+                else if (mode != Mode.NONE) {
                     storedMode = mode;
+                    storedGizmoObj = hit.collider.gameObject;
                 }
             }
 
             if (storedMode != Mode.NONE) {
                 storedPosition = transform.position;
-                movingGimble = GetProjectedPosition(Input.mousePosition, storedMode, out storedProjectedPosition);
+                GetProjectedPosition(Input.mousePosition, storedMode, out storedProjectedPosition);
+                SelectObject(storedGizmoObj);
+                moving = true;
             }
-        } else if (Input.GetMouseButton(0) && movingGimble) {
+        } else if (Input.GetMouseButton(0) && moving) {
             Vector3 targetProjectedPosition;
             bool success = GetProjectedPosition(Input.mousePosition, storedMode, out targetProjectedPosition);
             if (success) {
@@ -62,20 +72,40 @@ public class PositionControl : MonoBehaviour {
                 }
             }
         } else if (Input.GetMouseButtonUp(0)) {
-            movingGimble = false;
+            storedGizmoObj.GetComponent<Renderer>().material = storedMat;
+            storedMode = Mode.NONE;
+            DeselectObject(storedGizmoObj);
+            storedGizmoObj = null;
+            moving = false;
         }
 	}
 
     /**
      * Check the mapping if the provided GameObject has an associated mode.
      */
-    private Mode FindMode(GameObject obj) {
+    private Mode FindModeFromObj(GameObject obj) {
         foreach (ObjectToMode objMode in objModeMapping) {
             if (objMode.obj == obj) {
                 return objMode.mode;
             }
         }
         return Mode.NONE;
+    }
+
+    private void SelectObject(GameObject obj) {
+        for (int i = 0; i < obj.transform.parent.childCount; i++) {
+            GameObject child = obj.transform.parent.GetChild(i).gameObject;
+            storedMat = child.GetComponent<Renderer>().material;
+            child.GetComponent<Renderer>().material = selectedMat;
+        }
+    }
+
+    private void DeselectObject(GameObject obj) {
+        for (int i = 0; i < obj.transform.parent.childCount; i++) {
+            GameObject child = obj.transform.parent.GetChild(i).gameObject;
+            child.GetComponent<Renderer>().material = storedMat;
+        }
+        storedMat = null;
     }
 
     /**
