@@ -23,6 +23,7 @@ public class SimulatorControl : MonoBehaviour {
             Vector2 diff = (mousePosition - storedMousePosition) * mouseSensitivity;
             transform.rotation = storedRotation;
             transform.Rotate(-diff.y, diff.x, 0);
+            transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0);
         }
 
         // Process lateral movement through WASD and vertical movement through QE
