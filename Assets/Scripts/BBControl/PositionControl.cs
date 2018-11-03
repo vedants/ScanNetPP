@@ -18,9 +18,11 @@ public class PositionControl : MonoBehaviour {
     public static string GIMBLE_LAYER = "Gimble";
     public static float MAX_DISTANCE = 100;
 
+    public float scaleFactor;
     public Material selectedMat;
     public ObjectToMode[] objModeMapping;
 
+    private GameObject linkedObj;
     private int raycastLayer;
     private bool moving = false;
 
@@ -29,6 +31,21 @@ public class PositionControl : MonoBehaviour {
     private Vector3 storedPosition, storedProjectedPosition;
     private GameObject storedGizmoObj;
     private Material storedMat;
+
+    /**
+     * Link a given object to the gizmo.
+     */
+    public void LinkObject(GameObject obj) {
+        linkedObj = obj;
+        transform.position = linkedObj.transform.position;
+    }
+
+    /**
+     * Unlink the currently linked object to the gizmo.
+     */
+    public void UnlinkObject() {
+        linkedObj = null;
+    }
 
 	void Start () {
 		raycastLayer = LayerMask.GetMask(GIMBLE_LAYER);
@@ -57,7 +74,7 @@ public class PositionControl : MonoBehaviour {
             if (storedMode != Mode.NONE) {
                 storedPosition = transform.position;
                 GetProjectedPosition(Input.mousePosition, storedMode, out storedProjectedPosition);
-                SelectObject(storedGizmoObj);
+                SelectGizmoObject(storedGizmoObj);
                 moving = true;
             }
         } else if (Input.GetMouseButton(0) && moving) {
@@ -74,10 +91,16 @@ public class PositionControl : MonoBehaviour {
         } else if (Input.GetMouseButtonUp(0)) {
             storedGizmoObj.GetComponent<Renderer>().material = storedMat;
             storedMode = Mode.NONE;
-            DeselectObject(storedGizmoObj);
+            DeselectGizmoObject(storedGizmoObj);
             storedGizmoObj = null;
             moving = false;
         }
+
+        if (linkedObj != null) {
+            linkedObj.transform.position = transform.position;
+        }
+
+        ResizeGizmo();
 	}
 
     /**
@@ -92,7 +115,10 @@ public class PositionControl : MonoBehaviour {
         return Mode.NONE;
     }
 
-    private void SelectObject(GameObject obj) {
+    /**
+     * Modify the colors of the in-use gizmo component.
+     */
+    private void SelectGizmoObject(GameObject obj) {
         for (int i = 0; i < obj.transform.parent.childCount; i++) {
             GameObject child = obj.transform.parent.GetChild(i).gameObject;
             storedMat = child.GetComponent<Renderer>().material;
@@ -100,12 +126,23 @@ public class PositionControl : MonoBehaviour {
         }
     }
 
-    private void DeselectObject(GameObject obj) {
+    /**
+     * Undo the color modification of the no-longer-in-use gizmo component.
+     */
+    private void DeselectGizmoObject(GameObject obj) {
         for (int i = 0; i < obj.transform.parent.childCount; i++) {
             GameObject child = obj.transform.parent.GetChild(i).gameObject;
             child.GetComponent<Renderer>().material = storedMat;
         }
         storedMat = null;
+    }
+
+    /**
+     * Resize the gizmo to something appropriate for the distance.
+     */
+    private void ResizeGizmo() {
+        float distance = Vector3.Distance(Camera.main.transform.position, transform.position);
+        transform.localScale = Vector3.one * distance * scaleFactor;
     }
 
     /**
