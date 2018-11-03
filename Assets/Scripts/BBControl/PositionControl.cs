@@ -15,7 +15,7 @@ public class PositionControl : MonoBehaviour {
     public static Vector3 XZ_NORMAL = Vector3.up;
     public static Vector3 YZ_NORMAL = Vector3.right;
     public static Vector3 XY_NORMAL = Vector3.forward;
-    public static string GIMBLE_LAYER = "Gimble";
+    public static string GIZMO_LAYER = "Gizmo";
     public static float MAX_DISTANCE = 100;
 
     public float scaleFactor;
@@ -48,14 +48,13 @@ public class PositionControl : MonoBehaviour {
     }
 
 	void Start () {
-		raycastLayer = LayerMask.GetMask(GIMBLE_LAYER);
+		raycastLayer = LayerMask.GetMask(GIZMO_LAYER);
         storedMode = Mode.NONE;
     }
 	
 	void Update () {
         if (Input.GetMouseButtonDown(0)) {
-            Camera cam = Camera.main;
-            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit[] hits;
             hits = Physics.RaycastAll(ray, 100f, raycastLayer, QueryTriggerInteraction.Collide);
             foreach (RaycastHit hit in hits) {
@@ -89,11 +88,13 @@ public class PositionControl : MonoBehaviour {
                 }
             }
         } else if (Input.GetMouseButtonUp(0)) {
-            storedGizmoObj.GetComponent<Renderer>().material = storedMat;
-            storedMode = Mode.NONE;
-            DeselectGizmoObject(storedGizmoObj);
-            storedGizmoObj = null;
-            moving = false;
+            if (storedGizmoObj != null) {
+                storedGizmoObj.GetComponent<Renderer>().material = storedMat;
+                storedMode = Mode.NONE;
+                DeselectGizmoObject(storedGizmoObj);
+                storedGizmoObj = null;
+                moving = false;
+            }
         }
 
         if (linkedObj != null) {
