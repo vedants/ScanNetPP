@@ -20,13 +20,12 @@ public class GizmoControl : MonoBehaviour {
     }
 
     private void Update() {
-        if (Input.GetMouseButtonDown(0)) {
+        if (InputManager.instance.touchDown) {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit, Mathf.Infinity)) {
                 GameObject obj = hit.collider.gameObject;
                 if (obj != selectedObj && obj.layer != gizmoLayer) {
-                    print(obj.name);
                     SetupToolOnObj(obj, currentTool);
                 }
             } else {

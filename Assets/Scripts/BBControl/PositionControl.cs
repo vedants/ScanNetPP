@@ -53,7 +53,7 @@ public class PositionControl : MonoBehaviour {
     }
 	
 	void Update () {
-        if (Input.GetMouseButtonDown(0)) {
+        if (InputManager.instance.touchDown) {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit[] hits;
             hits = Physics.RaycastAll(ray, 100f, raycastLayer, QueryTriggerInteraction.Collide);
@@ -76,7 +76,7 @@ public class PositionControl : MonoBehaviour {
                 SelectGizmoObject(storedGizmoObj);
                 moving = true;
             }
-        } else if (Input.GetMouseButton(0) && moving) {
+        } else if (InputManager.instance.touch && moving) {
             Vector3 targetProjectedPosition;
             bool success = GetProjectedPosition(Input.mousePosition, storedMode, out targetProjectedPosition);
             if (success) {
@@ -87,7 +87,7 @@ public class PositionControl : MonoBehaviour {
                     transform.position = storedPosition + (newPosition - storedPosition).normalized * MAX_DISTANCE;
                 }
             }
-        } else if (Input.GetMouseButtonUp(0)) {
+        } else if (InputManager.instance.touchUp) {
             if (storedGizmoObj != null) {
                 storedGizmoObj.GetComponent<Renderer>().material = storedMat;
                 storedMode = Mode.NONE;
