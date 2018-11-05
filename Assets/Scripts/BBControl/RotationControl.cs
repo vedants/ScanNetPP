@@ -4,25 +4,43 @@ using UnityEngine;
 
 public class RotationControl : MonoBehaviour {
 
-    public float sensitivity = 1;
+    public float sensitivity;
+    public float scaleFactor;
+    public Material selectedMat;
 
+    private GameObject linkedObj;
     private bool rotating = false;
+    private GameObject storedGizmoObj;
     private Quaternion startingRotation;
     private Vector3 planeNormal;
     private Vector2 lineOrigin;
     private Vector2 lineDir;
+    private Material storedMat;
 
-	void Update () {
+    /**
+     * Link a given object to the gizmo.
+     */
+    public void LinkObject(GameObject obj) {
+        linkedObj = obj;
+    }
+
+    /**
+     * Unlink the currently linked object to the gizmo.
+     */
+    public void UnlinkObject() {
+        linkedObj = null;
+    }
+
+    void Update () {
 		if (InputManager.instance.touchDown) {
             Ray ray = Camera.main.ScreenPointToRay(InputManager.instance.position);
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit, Mathf.Infinity, GizmoControl.GIZMO_LAYER_MASK, QueryTriggerInteraction.Collide)) {
-                GameObject obj = hit.collider.gameObject;
+                storedGizmoObj = hit.collider.gameObject;
                 startingRotation = transform.rotation;
-                print(obj.name);
 
                 // Project collison hit point to plane of rotation
-                planeNormal = obj.transform.TransformDirection(Vector3.up);
+                planeNormal = storedGizmoObj.transform.TransformDirection(Vector3.up);
                 Vector3 origin3D = Utils.GetPointToPlaneClosestPoint(hit.point, transform.position, planeNormal);
 
                 // Compute tangent 3D line
@@ -36,6 +54,7 @@ public class RotationControl : MonoBehaviour {
                 lineOrigin = origin2D;
                 lineDir = dir2D;
 
+                storedMat = Utils.ChangeSiblingMaterial(storedGizmoObj, selectedMat);
                 rotating = true;
             }
         } else if (InputManager.instance.touch && rotating) {
@@ -53,7 +72,24 @@ public class RotationControl : MonoBehaviour {
             transform.rotation = startingRotation;
             transform.RotateAround(transform.position, planeNormal, angle);
         } else if (InputManager.instance.touchUp) {
+            Utils.ChangeSiblingMaterial(storedGizmoObj, storedMat);
+            storedGizmoObj = null;
+            storedMat = null;
             rotating = false;
         }
-	}
+
+        if (linkedObj != null) {
+            linkedObj.transform.rotation = transform.rotation;
+        }
+
+        ResizeGizmo();
+    }
+
+    /**
+     * Resize the gizmo to something appropriate for the distance.
+     */
+    private void ResizeGizmo() {
+        float distance = Vector3.Distance(Camera.main.transform.position, transform.position);
+        transform.localScale = Vector3.one * distance * scaleFactor;
+    }
 }

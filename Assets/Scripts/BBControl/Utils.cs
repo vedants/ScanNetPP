@@ -63,4 +63,20 @@ public class Utils : MonoBehaviour {
             return -1;
         }
     }
+
+    /**
+     * Modify the colors of all siblings of an object (including itself).
+     * Returns one of the original materials, or null if no renderers are found.
+     */
+    public static Material ChangeSiblingMaterial(GameObject obj, Material mat) {
+        Material storedMat = null;
+        for (int i = 0; i < obj.transform.parent.childCount; i++) {
+            GameObject child = obj.transform.parent.GetChild(i).gameObject;
+            if (child.GetComponent<Renderer>() != null) {
+                storedMat = child.GetComponent<Renderer>().material;
+                child.GetComponent<Renderer>().material = mat;
+            }
+        }
+        return storedMat;
+    }
 }

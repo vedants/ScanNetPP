@@ -35,7 +35,6 @@ public class PositionControl : MonoBehaviour {
      */
     public void LinkObject(GameObject obj) {
         linkedObj = obj;
-        transform.position = linkedObj.transform.position;
     }
 
     /**
@@ -70,7 +69,7 @@ public class PositionControl : MonoBehaviour {
             if (storedMode != Mode.NONE) {
                 storedPosition = transform.position;
                 GetProjectedPosition(InputManager.instance.position, storedMode, out storedProjectedPosition);
-                SelectGizmoObject(storedGizmoObj);
+                storedMat = Utils.ChangeSiblingMaterial(storedGizmoObj, selectedMat);
                 moving = true;
             }
         } else if (InputManager.instance.touch && moving) {
@@ -86,9 +85,8 @@ public class PositionControl : MonoBehaviour {
             }
         } else if (InputManager.instance.touchUp) {
             if (storedGizmoObj != null) {
-                storedGizmoObj.GetComponent<Renderer>().material = storedMat;
                 storedMode = Mode.NONE;
-                DeselectGizmoObject(storedGizmoObj);
+                Utils.ChangeSiblingMaterial(storedGizmoObj, storedMat);
                 storedGizmoObj = null;
                 moving = false;
             }
@@ -111,17 +109,6 @@ public class PositionControl : MonoBehaviour {
             }
         }
         return Mode.NONE;
-    }
-
-    /**
-     * Modify the colors of the in-use gizmo component.
-     */
-    private void SelectGizmoObject(GameObject obj) {
-        for (int i = 0; i < obj.transform.parent.childCount; i++) {
-            GameObject child = obj.transform.parent.GetChild(i).gameObject;
-            storedMat = child.GetComponent<Renderer>().material;
-            child.GetComponent<Renderer>().material = selectedMat;
-        }
     }
 
     /**

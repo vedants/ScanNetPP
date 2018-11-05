@@ -4,13 +4,14 @@ using UnityEngine;
 
 public class GizmoControl : MonoBehaviour {
 
-    public enum Tool { POSITION, NONE };
+    public enum Tool { POSITION, ROTATION, NONE };
 
     public static string GIZMO_LAYER_NAME = "Gizmo";
     public static int GIZMO_LAYER;
     public static int GIZMO_LAYER_MASK;
 
     public GameObject positionTool;
+    public GameObject rotationTool;
     public Tool currentTool;
 
     private int gizmoLayer;
@@ -47,7 +48,15 @@ public class GizmoControl : MonoBehaviour {
         switch (tool) {
             case Tool.POSITION:
                 toolObj = Instantiate(positionTool, obj.transform.position, Quaternion.identity);
-                toolObj.GetComponent<PositionControl>().LinkObject(selectedObj);
+                PositionControl positionControl = toolObj.GetComponent<PositionControl>();
+                positionControl.LinkObject(selectedObj);
+                toolObj.transform.localScale = Vector3.one * positionControl.scaleFactor;
+                break;
+            case Tool.ROTATION:
+                toolObj = Instantiate(rotationTool, obj.transform.position, obj.transform.rotation);
+                RotationControl rotationControl = toolObj.GetComponent<RotationControl>();
+                rotationControl.LinkObject(selectedObj);
+                toolObj.transform.localScale = Vector3.one * rotationControl.scaleFactor;
                 break;
         }
     }
