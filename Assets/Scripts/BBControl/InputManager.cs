@@ -9,6 +9,7 @@ public class InputManager : MonoBehaviour {
     public bool touchDown; // True on the frame input pressed down
     public bool touchUp; // True while pressed down
     public bool touch; // True on the frame input was released
+    public Vector2 position; // Mouse or finger position
 
 	// Use this for initialization
 	void Start () {
@@ -21,6 +22,7 @@ public class InputManager : MonoBehaviour {
         touchDown = false;
         touchUp = false;
         touch = false;
+        position = Vector3.zero;
 	}
 	
 	// Update is called once per frame
@@ -28,5 +30,6 @@ public class InputManager : MonoBehaviour {
         touchDown = Input.GetMouseButtonDown(0);
         touchUp = Input.GetMouseButtonUp(0);
         touch = Input.GetMouseButton(0);
+        position = Input.mousePosition;
 	}
 }

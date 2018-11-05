@@ -7,7 +7,7 @@ public class PositionControl : MonoBehaviour {
     public enum Mode {XZ, YZ, XY, X, Y, Z, NONE};
 
     [System.Serializable]
-    public struct ObjectToMode {
+    private struct ObjectToMode {
         public GameObject obj;
         public Mode mode;
     }
@@ -15,15 +15,13 @@ public class PositionControl : MonoBehaviour {
     public static Vector3 XZ_NORMAL = Vector3.up;
     public static Vector3 YZ_NORMAL = Vector3.right;
     public static Vector3 XY_NORMAL = Vector3.forward;
-    public static string GIZMO_LAYER = "Gizmo";
     public static float MAX_DISTANCE = 100;
 
     public float scaleFactor;
     public Material selectedMat;
-    public ObjectToMode[] objModeMapping;
 
+    [SerializeField] private ObjectToMode[] objModeMapping;
     private GameObject linkedObj;
-    private int raycastLayer;
     private bool moving = false;
 
     // Blackboard Variables
@@ -48,15 +46,14 @@ public class PositionControl : MonoBehaviour {
     }
 
 	void Start () {
-		raycastLayer = LayerMask.GetMask(GIZMO_LAYER);
         storedMode = Mode.NONE;
     }
 	
 	void Update () {
         if (InputManager.instance.touchDown) {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            Ray ray = Camera.main.ScreenPointToRay(InputManager.instance.position);
             RaycastHit[] hits;
-            hits = Physics.RaycastAll(ray, 100f, raycastLayer, QueryTriggerInteraction.Collide);
+            hits = Physics.RaycastAll(ray, Mathf.Infinity, GizmoControl.GIZMO_LAYER_MASK, QueryTriggerInteraction.Collide);
             foreach (RaycastHit hit in hits) {
                 Mode mode = FindModeFromObj(hit.collider.gameObject);
                 if (mode == Mode.X || mode == Mode.Y || mode == Mode.Z) {
@@ -72,13 +69,13 @@ public class PositionControl : MonoBehaviour {
 
             if (storedMode != Mode.NONE) {
                 storedPosition = transform.position;
-                GetProjectedPosition(Input.mousePosition, storedMode, out storedProjectedPosition);
+                GetProjectedPosition(InputManager.instance.position, storedMode, out storedProjectedPosition);
                 SelectGizmoObject(storedGizmoObj);
                 moving = true;
             }
         } else if (InputManager.instance.touch && moving) {
             Vector3 targetProjectedPosition;
-            bool success = GetProjectedPosition(Input.mousePosition, storedMode, out targetProjectedPosition);
+            bool success = GetProjectedPosition(InputManager.instance.position, storedMode, out targetProjectedPosition);
             if (success) {
                 Vector3 newPosition = storedPosition + (targetProjectedPosition - storedProjectedPosition);
                 if ((newPosition - storedPosition).sqrMagnitude <= MAX_DISTANCE * MAX_DISTANCE) {
@@ -170,13 +167,13 @@ public class PositionControl : MonoBehaviour {
         float t = -1;
         switch (mode) {
             case Mode.XZ:
-                t = GetRayPlaneIntersection(transform.position, XZ_NORMAL, ray.origin, ray.direction);
+                t = Utils.GetLineToPlaneIntersectionParameter(transform.position, XZ_NORMAL, ray.origin, ray.direction);
                 break;
             case Mode.YZ:
-                t = GetRayPlaneIntersection(transform.position, YZ_NORMAL, ray.origin, ray.direction);
+                t = Utils.GetLineToPlaneIntersectionParameter(transform.position, YZ_NORMAL, ray.origin, ray.direction);
                 break;
             case Mode.XY:
-                t = GetRayPlaneIntersection(transform.position, XY_NORMAL, ray.origin, ray.direction);
+                t = Utils.GetLineToPlaneIntersectionParameter(transform.position, XY_NORMAL, ray.origin, ray.direction);
                 break;
             default:
                 Debug.Log("This should never happen. Invalid mode detected: " + mode);
@@ -218,56 +215,15 @@ public class PositionControl : MonoBehaviour {
                 return false;
         }
 
-        float t = GetRayPlaneIntersection(transform.position, normal, ray.origin, ray.direction);
+        float t = Utils.GetLineToPlaneIntersectionParameter(transform.position, normal, ray.origin, ray.direction);
         if (t > 0) {
             Vector3 projectedPlane = ray.origin + ray.direction * t;
-            Vector3 linePlane = GetPointLineIntersection(projectedPlane, transform.position, axis);
+            Vector3 linePlane = Utils.ProjectPointToLine(projectedPlane, transform.position, axis);
             projectedPosition = linePlane;
             return true;
         }
 
         projectedPosition = Vector3.zero;
         return false;
-    }
-
-    /**
-     * Given mathematical descriptions of a plane and ray, output "t",
-     * the parameterized location on the ray where the intersection occurs.
-     * Return -1 if no intersection is found (to some epsilon of error).
-     * https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-plane-and-ray-disk-intersection
-     */
-    private float GetRayPlaneIntersection(Vector3 planeOrigin, Vector3 planeNormal, Vector3 rayOrigin, Vector3 rayDirection) {
-        float denom = Vector3.Dot(planeNormal, rayDirection);
-        if (Mathf.Abs(denom) > 0.0001) {
-            return Vector3.Dot(planeOrigin - rayOrigin, planeNormal) / denom;
-        } else {
-            return -1;
-        }
-    }
-
-    /**
-     * Given a line described by A and a ray described by B, output "t",
-     * the parameterized location on the ray that is closest to the line.
-     */
-    private float GetRayLineIntersection(Vector3 pA, Vector3 dirA, Vector3 pB, Vector3 dirB) {
-        float b = Vector3.Dot(dirA, dirB);
-        float c = Vector3.Dot(dirA, pB - pA);
-        float f = Vector3.Dot(dirB, pB - pA);
-        float denom = 1 - b * b;
-        if (Mathf.Abs(denom) > 0.0001) {
-            return c - b * f / denom;
-        } else {
-            print("Reached");
-            return 0;
-        }
-    }
-
-    /**
-     * Given a line and point, output "t",
-     * the location on the line closest to the point.
-     */
-    private Vector3 GetPointLineIntersection(Vector3 point, Vector3 lineOrigin, Vector3 lineDirection) {
-        float t = Vector3.Dot(lineDirection, point - lineOrigin);
-        return lineOrigin + t * lineDirection;
     }
 }

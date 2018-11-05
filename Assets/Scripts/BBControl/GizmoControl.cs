@@ -6,7 +6,9 @@ public class GizmoControl : MonoBehaviour {
 
     public enum Tool { POSITION, NONE };
 
-    public static string GIZMO_LAYER = "Gizmo";
+    public static string GIZMO_LAYER_NAME = "Gizmo";
+    public static int GIZMO_LAYER;
+    public static int GIZMO_LAYER_MASK;
 
     public GameObject positionTool;
     public Tool currentTool;
@@ -16,16 +18,17 @@ public class GizmoControl : MonoBehaviour {
     private GameObject toolObj;
 
     private void Start() {
-        gizmoLayer = LayerMask.NameToLayer(GIZMO_LAYER);
+        GIZMO_LAYER = LayerMask.NameToLayer(GIZMO_LAYER_NAME);
+        GIZMO_LAYER_MASK = LayerMask.GetMask(GIZMO_LAYER_NAME);
     }
 
     private void Update() {
         if (InputManager.instance.touchDown) {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            Ray ray = Camera.main.ScreenPointToRay(InputManager.instance.position);
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit, Mathf.Infinity)) {
                 GameObject obj = hit.collider.gameObject;
-                if (obj != selectedObj && obj.layer != gizmoLayer) {
+                if (obj != selectedObj && obj.layer != GIZMO_LAYER) {
                     SetupToolOnObj(obj, currentTool);
                 }
             } else {
