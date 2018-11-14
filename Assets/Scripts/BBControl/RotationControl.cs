@@ -72,10 +72,12 @@ public class RotationControl : MonoBehaviour {
             transform.rotation = startingRotation;
             transform.RotateAround(transform.position, planeNormal, angle);
         } else if (InputManager.instance.touchUp) {
-            Utils.ChangeSiblingMaterial(storedGizmoObj, storedMat);
-            storedGizmoObj = null;
-            storedMat = null;
-            rotating = false;
+            if (rotating) {
+                Utils.ChangeSiblingMaterial(storedGizmoObj, storedMat);
+                storedGizmoObj = null;
+                storedMat = null;
+                rotating = false;
+            }
         }
 
         if (linkedObj != null) {
