@@ -41,7 +41,7 @@ public class GizmoControl : MonoBehaviour {
     }
 
     private void Update() {
-        if (InputManager.instance.touchDown) {
+        if (InputManager.instance.touchDown && !InputManager.instance.touchDownUI) {
             Ray ray = Camera.main.ScreenPointToRay(InputManager.instance.position);
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit, Mathf.Infinity)) {

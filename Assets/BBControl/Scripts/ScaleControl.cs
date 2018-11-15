@@ -83,6 +83,8 @@ public class ScaleControl : MonoBehaviour {
             storedMat = null;
             scaling = false;
         }
+
+        ResizeGizmo();
     }
 
     /**
@@ -123,16 +125,16 @@ public class ScaleControl : MonoBehaviour {
         Vector3 normal, axis = Vector3.zero;
         switch (storedMode) {
             case Mode.X:
-                normal = transform.InverseTransformDirection(Vector3.up);
-                axis = transform.InverseTransformDirection(Vector3.right);
+                normal = transform.TransformDirection(Vector3.up);
+                axis = transform.TransformDirection(Vector3.right);
                 break;
             case Mode.Y:
-                normal = transform.InverseTransformDirection(Vector3.right);
-                axis = transform.InverseTransformDirection(Vector3.up);
+                normal = transform.TransformDirection(Vector3.right);
+                axis = transform.TransformDirection(Vector3.up);
                 break;
             case Mode.Z:
-                normal = transform.InverseTransformDirection(Vector3.right);
-                axis = transform.InverseTransformDirection(Vector3.forward);
+                normal = transform.TransformDirection(Vector3.right);
+                axis = transform.TransformDirection(Vector3.forward);
                 break;
             default:
                 projectedPosition = Vector3.zero;
@@ -145,5 +147,13 @@ public class ScaleControl : MonoBehaviour {
                 normal,
                 axis,
                 out projectedPosition);
+    }
+
+    private void ResizeGizmo() {
+        float distance = Vector3.Distance(Camera.main.transform.position, transform.position);
+        Vector3 scale = Vector3.one * distance * scaleFactor;
+        foreach (ObjectToMode objectToMode in objModeMapping) {
+            objectToMode.obj.transform.localScale = scale;
+        }
     }
 }
