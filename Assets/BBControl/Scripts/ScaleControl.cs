@@ -49,7 +49,7 @@ public class ScaleControl : MonoBehaviour {
                 storedGizmoObj.GetComponent<Renderer>().material = selectedMat;
                 scaling = true;
             }
-        } else if (InputManager.instance.touch && scaling) {
+        } else if (InputManager.instance.touching && scaling) {
             Vector3 targetProjectedPosition;
             bool success = GetAxisProjection(out targetProjectedPosition);
             if (success) {

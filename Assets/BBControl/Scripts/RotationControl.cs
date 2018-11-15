@@ -58,7 +58,7 @@ public class RotationControl : MonoBehaviour {
                 storedMat = Utils.ChangeSiblingMaterial(storedGizmoObj, selectedMat);
                 rotating = true;
             }
-        } else if (InputManager.instance.touch && rotating) {
+        } else if (InputManager.instance.touching && rotating) {
             // Project touch position to line
             Vector2 pos = Utils.ProjectPointToLine(InputManager.instance.position, lineOrigin, lineDir);
 

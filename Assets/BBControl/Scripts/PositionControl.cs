@@ -64,7 +64,7 @@ public class PositionControl : MonoBehaviour {
                 storedMat = Utils.ChangeSiblingMaterial(storedGizmoObj, selectedMat);
                 moving = true;
             }
-        } else if (InputManager.instance.touch && moving) {
+        } else if (InputManager.instance.touching && moving) {
             Vector3 targetProjectedPosition;
             bool success = Utils.GetProjectedPosition(InputManager.instance.position, transform.position, storedMode, out targetProjectedPosition);
             if (success) {
