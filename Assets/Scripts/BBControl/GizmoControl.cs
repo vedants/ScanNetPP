@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class GizmoControl : MonoBehaviour {
 
-    public enum Tool { POSITION, ROTATION, NONE };
+    public enum Tool { POSITION, ROTATION, SCALE, NONE };
 
     public static string GIZMO_LAYER_NAME = "Gizmo";
     public static int GIZMO_LAYER;
@@ -12,6 +12,7 @@ public class GizmoControl : MonoBehaviour {
 
     public GameObject positionTool;
     public GameObject rotationTool;
+    public GameObject scaleTool;
     public Tool currentTool;
 
     private int gizmoLayer;
@@ -50,13 +51,16 @@ public class GizmoControl : MonoBehaviour {
                 toolObj = Instantiate(positionTool, obj.transform.position, Quaternion.identity);
                 PositionControl positionControl = toolObj.GetComponent<PositionControl>();
                 positionControl.LinkObject(selectedObj);
-                toolObj.transform.localScale = Vector3.one * positionControl.scaleFactor;
                 break;
             case Tool.ROTATION:
                 toolObj = Instantiate(rotationTool, obj.transform.position, obj.transform.rotation);
                 RotationControl rotationControl = toolObj.GetComponent<RotationControl>();
                 rotationControl.LinkObject(selectedObj);
-                toolObj.transform.localScale = Vector3.one * rotationControl.scaleFactor;
+                break;
+            case Tool.SCALE:
+                toolObj = Instantiate(scaleTool, obj.transform.position, obj.transform.rotation);
+                ScaleControl scaleControl = toolObj.GetComponent<ScaleControl>();
+                scaleControl.LinkObject(selectedObj);
                 break;
         }
     }

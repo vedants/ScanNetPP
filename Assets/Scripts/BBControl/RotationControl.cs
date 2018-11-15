@@ -22,6 +22,7 @@ public class RotationControl : MonoBehaviour {
      */
     public void LinkObject(GameObject obj) {
         linkedObj = obj;
+        ResizeGizmo();
     }
 
     /**
@@ -71,13 +72,11 @@ public class RotationControl : MonoBehaviour {
             // Rotate obj from its starting rotation by theta
             transform.rotation = startingRotation;
             transform.RotateAround(transform.position, planeNormal, angle);
-        } else if (InputManager.instance.touchUp) {
-            if (rotating) {
-                Utils.ChangeSiblingMaterial(storedGizmoObj, storedMat);
-                storedGizmoObj = null;
-                storedMat = null;
-                rotating = false;
-            }
+        } else if (InputManager.instance.touchUp && rotating) {
+            Utils.ChangeSiblingMaterial(storedGizmoObj, storedMat);
+            storedGizmoObj = null;
+            storedMat = null;
+            rotating = false;
         }
 
         if (linkedObj != null) {
