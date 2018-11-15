@@ -5,6 +5,7 @@ using UnityEngine;
 public class ScaleControl : MonoBehaviour {
 
     public float scaleFactor;
+    public Material selectedMat;
 
     [SerializeField] private ObjectToMode[] objModeMapping;
     private GameObject linkedObj;
@@ -12,6 +13,7 @@ public class ScaleControl : MonoBehaviour {
     private bool scaling;
     private GameObject storedGizmoObj;
     private Vector3 storedPosition, storedInversePosition, storedProjectedPosition;
+    private Material storedMat;
 
     /**
      * Link a given object to the gizmo.
@@ -43,6 +45,8 @@ public class ScaleControl : MonoBehaviour {
                 storedInversePosition = transform.position - (storedPosition - transform.position);
                 storedMode = Utils.FindModeFromObj(objModeMapping, hit.collider.gameObject);
                 GetAxisProjection(out storedProjectedPosition);
+                storedMat = storedGizmoObj.GetComponent<Renderer>().material;
+                storedGizmoObj.GetComponent<Renderer>().material = selectedMat;
                 scaling = true;
             }
         } else if (InputManager.instance.touch && scaling) {
@@ -74,7 +78,9 @@ public class ScaleControl : MonoBehaviour {
             }
         } else if (InputManager.instance.touchUp && scaling) {
             storedMode = Mode.NONE;
+            storedGizmoObj.GetComponent<Renderer>().material = storedMat;
             storedGizmoObj = null;
+            storedMat = null;
             scaling = false;
         }
     }

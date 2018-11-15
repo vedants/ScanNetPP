@@ -562,6 +562,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   scaleFactor: 1
+  selectedMat: {fileID: 2100000, guid: db9f732c35bd06e46bac5563dce6ac6e, type: 2}
   objModeMapping:
   - obj: {fileID: 1372575602020036}
     mode: 3
