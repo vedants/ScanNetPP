@@ -7,7 +7,6 @@ public class PositionControl : MonoBehaviour {
     public static Vector3 XZ_NORMAL = Vector3.up;
     public static Vector3 YZ_NORMAL = Vector3.right;
     public static Vector3 XY_NORMAL = Vector3.forward;
-    public static float MAX_DISTANCE = 100;
 
     public float scaleFactor;
     public Material selectedMat;
@@ -70,10 +69,10 @@ public class PositionControl : MonoBehaviour {
             bool success = Utils.GetProjectedPosition(InputManager.instance.position, transform.position, storedMode, out targetProjectedPosition);
             if (success) {
                 Vector3 newPosition = storedPosition + (targetProjectedPosition - storedProjectedPosition);
-                if ((newPosition - storedPosition).sqrMagnitude <= MAX_DISTANCE * MAX_DISTANCE) {
+                if ((newPosition - storedPosition).sqrMagnitude <= GizmoControl.MAX_DISTANCE * GizmoControl.MAX_DISTANCE) {
                     transform.position = newPosition;
                 } else {
-                    transform.position = storedPosition + (newPosition - storedPosition).normalized * MAX_DISTANCE;
+                    transform.position = storedPosition + (newPosition - storedPosition).normalized * GizmoControl.MAX_DISTANCE;
                 }
             }
         } else if (InputManager.instance.touchUp && moving) {

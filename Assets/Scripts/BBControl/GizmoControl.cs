@@ -9,6 +9,7 @@ public class GizmoControl : MonoBehaviour {
     public static string GIZMO_LAYER_NAME = "Gizmo";
     public static int GIZMO_LAYER;
     public static int GIZMO_LAYER_MASK;
+    public static float MAX_DISTANCE = 100;
 
     public GameObject positionTool;
     public GameObject rotationTool;

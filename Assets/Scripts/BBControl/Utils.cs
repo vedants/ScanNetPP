@@ -101,6 +101,11 @@ public class Utils : MonoBehaviour {
                 return false;
         }
 
+        return PerformAxisProjection(screenPosition, origin, normal, axis, out projectedPosition);
+    }
+
+    public static bool PerformAxisProjection(Vector3 screenPosition, Vector3 origin, Vector3 normal, Vector3 axis, out Vector3 projectedPosition) {
+        Ray ray = Camera.main.ScreenPointToRay(screenPosition);
         float t = GetLineToPlaneIntersectionParameter(origin, normal, ray.origin, ray.direction);
         if (t > 0) {
             Vector3 projectedPlane = ray.origin + ray.direction * t;
