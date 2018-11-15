@@ -79,8 +79,6 @@ public class Utils : MonoBehaviour {
      * GetProjectedPosition, but restricted to the axis case.
      */
     public static bool GetAxisProjection(Vector3 screenPosition, Vector3 origin, Mode mode, out Vector3 projectedPosition) {
-        Camera cam = Camera.main;
-        Ray ray = cam.ScreenPointToRay(screenPosition);
         Vector3 normal, axis;
         switch (mode) {
             case Mode.X:
