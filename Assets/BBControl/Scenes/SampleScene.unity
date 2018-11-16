@@ -258,13 +258,13 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 363296796}
-  m_LocalRotation: {x: -0.20570464, y: 0.16351688, z: 0.33666, w: 0.9042167}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: -28.823002, y: 10.337001, z: 38.18}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &667595663
 GameObject:
   m_ObjectHideFlags: 0
@@ -737,8 +737,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1204356674}
-  m_LocalRotation: {x: -0.25454837, y: -0.15869981, z: 0.04238658, w: -0.95300734}
-  m_LocalPosition: {x: -0.8945792, y: 1.5053418, z: -2.842212}
+  m_LocalRotation: {x: 0.05397754, y: -0.010474234, z: 0.00056831905, w: 0.99848706}
+  m_LocalPosition: {x: 0.107346535, y: 0.13554573, z: -2.9122367}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -896,7 +896,7 @@ MonoBehaviour:
   touchDown: 0
   touchDownUI: 0
   touchUp: 0
-  touch: 0
+  touching: 0
   position: {x: 0, y: 0}
 --- !u!1 &1538146302
 GameObject:
