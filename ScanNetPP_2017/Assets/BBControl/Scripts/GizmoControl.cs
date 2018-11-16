@@ -15,6 +15,7 @@ public class GizmoControl : MonoBehaviour {
     public static int GIZMO_LAYER_MASK;
     public static float MAX_DISTANCE = 100;
 
+    public bool forceActive;
     public GameObject selectedObj;
     public Tool currentTool;
     public Color selectedColor;
@@ -171,6 +172,7 @@ public class GizmoControl : MonoBehaviour {
     }
 
     protected void HandleStructureARGameEvent(object sender, GameEventArgs args) {
+        bool newToolsEnabled = toolsEnabled;
         switch (args.gameState) {
             case SensorState.DeviceNotReady:
             case SensorState.CameraAccessRequired:
@@ -179,11 +181,39 @@ public class GizmoControl : MonoBehaviour {
             case SensorState.Playing:
             case SensorState.Reset:
             case SensorState.WaitingForMesh:
-                toolsEnabled = false;
+                newToolsEnabled = false;
                 break;
             case SensorState.Scanning:
-                toolsEnabled = true;
+                newToolsEnabled = true;
                 break;
+        }
+
+        if (forceActive) {
+            newToolsEnabled = true;
+        }
+
+        if (newToolsEnabled && !toolsEnabled) {
+            EnableTools();
+        } else {
+            DisableTools();
+        }
+
+        toolsEnabled = newToolsEnabled;
+    }
+
+    private void EnableTools() {
+        foreach (Button button in toolToButton.Values) {
+            button.interactable = true;
+        }
+    }
+
+    private void DisableTools() {
+        CleanupToolOnObj();
+        currentTool = Tool.NONE;
+        toolPrefab = null;
+
+        foreach (Button button in toolToButton.Values) {
+            button.interactable = false;
         }
     }
 }

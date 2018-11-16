@@ -688,6 +688,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 73a9d8d28297ad6499a2828f300af73c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  forceActive: 0
   selectedObj: {fileID: 0}
   currentTool: 5
   selectedColor: {r: 0.78676474, g: 1, b: 0.86764705, a: 1}
