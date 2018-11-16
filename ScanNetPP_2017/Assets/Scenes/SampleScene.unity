@@ -194,7 +194,7 @@ GameObject:
   - component: {fileID: 363296797}
   m_Layer: 0
   m_Name: Box
-  m_TagString: Untagged
+  m_TagString: BoundingBox
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -866,7 +866,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 73a9d8d28297ad6499a2828f300af73c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentTool: 3
+  selectedObj: {fileID: 0}
+  currentTool: 5
   selectedColor: {r: 0.78676474, g: 1, b: 0.86764705, a: 1}
   storedColor: {r: 1, g: 1, b: 1, a: 1}
   names:
@@ -893,6 +894,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 410b51c568aeb344eaae394ec4156248, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  uiRectTransforms: []
   touchDown: 0
   touchDownUI: 0
   touchUp: 0

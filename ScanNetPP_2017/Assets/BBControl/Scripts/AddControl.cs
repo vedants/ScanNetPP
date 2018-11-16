@@ -10,7 +10,6 @@ public class AddControl : MonoBehaviour {
 
 	private void Update () {
 		if (InputManager.instance.touchDown && !InputManager.instance.touchDownUI) {
-            print("It's happening");
             Vector3 position = Camera.main.transform.position + Camera.main.transform.forward * SPAWN_DISTANCE;
             GameObject boundingBox = Instantiate(boundingBoxPrefab, position, Quaternion.identity);
         }

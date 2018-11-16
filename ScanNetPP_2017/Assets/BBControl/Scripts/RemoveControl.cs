@@ -8,10 +8,9 @@ public class RemoveControl : MonoBehaviour {
         if (InputManager.instance.touchDown && !InputManager.instance.touchDownUI) {
             Ray ray = Camera.main.ScreenPointToRay(InputManager.instance.position);
             RaycastHit hit;
-            if (Physics.Raycast(ray, out hit, Mathf.Infinity, GizmoControl.GIZMO_LAYER_MASK, QueryTriggerInteraction.Collide)) {
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity)) {
                 GameObject obj = hit.collider.gameObject;
                 if (obj.CompareTag(GizmoControl.BOUNDING_BOX_TAG)) {
-                    print(obj.name);
                     Destroy(obj);
                     GizmoControl.instance.selectedObj = null;
                 }

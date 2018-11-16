@@ -57,16 +57,32 @@ public class GizmoControl : MonoBehaviour {
         if (InputManager.instance.touchDown && !InputManager.instance.touchDownUI) {
             Ray ray = Camera.main.ScreenPointToRay(InputManager.instance.position);
             RaycastHit hit;
+            GameObject obj = null;
+            bool setupRequired = false, cleanupRequired = true;
             if (Physics.Raycast(ray, out hit, Mathf.Infinity)) {
-                GameObject obj = hit.collider.gameObject;
-                if (obj != selectedObj && obj.layer != GIZMO_LAYER && obj.CompareTag(BOUNDING_BOX_TAG)) {
-                    selectedObj = obj;
-                    SetupToolOnObj(selectedObj, currentTool);
+                obj = hit.collider.gameObject;
+                if (obj.CompareTag(BOUNDING_BOX_TAG)) {
+                    if (obj != selectedObj) {
+                        setupRequired = true;
+                    } else {
+                        cleanupRequired = false;
+                    }
+                } else if (obj.layer == GIZMO_LAYER) {
+                    cleanupRequired = false;
                 }
-            } else {
-                if (selectedObj != null) {
+            }
+
+            if (cleanupRequired && selectedObj != null) {
+                if (currentTool == Tool.POSITION || currentTool == Tool.ROTATION || currentTool == Tool.SCALE) {
                     CleanupToolOnObj();
-                    selectedObj = null;
+                }
+                selectedObj = null;
+            }
+
+            if (setupRequired) {
+                selectedObj = obj;
+                if (currentTool == Tool.POSITION || currentTool == Tool.ROTATION || currentTool == Tool.SCALE) {
+                    SetupToolOnObj(selectedObj, currentTool);
                 }
             }
         }

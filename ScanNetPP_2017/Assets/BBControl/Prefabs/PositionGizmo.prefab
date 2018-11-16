@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 33023163048450584}
   - component: {fileID: 23276017362805720}
   - component: {fileID: 136795408537649366}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: ZTip
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37,7 +37,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4728804773587720}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: Faces
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -70,7 +70,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4137561924619376}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: X
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -85,7 +85,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4200458173993272}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: Axes
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -121,7 +121,7 @@ GameObject:
   - component: {fileID: 33373897537094714}
   - component: {fileID: 23425131076060382}
   - component: {fileID: 136327756880993378}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: YTip
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -139,7 +139,7 @@ GameObject:
   - component: {fileID: 33247182989820918}
   - component: {fileID: 23584022047960226}
   - component: {fileID: 136545550053272084}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: XTip
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -157,7 +157,7 @@ GameObject:
   - component: {fileID: 33643921103648420}
   - component: {fileID: 23436377752327814}
   - component: {fileID: 64825965629040328}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: XZ Back
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -190,7 +190,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4536671276754074}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: Y
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -205,7 +205,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4221851311982656}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: YZ
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -256,7 +256,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4524044749704026}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: Z
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -271,7 +271,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4488927093413614}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: XZ
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -287,7 +287,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4307729446319660}
   - component: {fileID: 114389230317179798}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: PositionGizmo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -323,7 +323,7 @@ GameObject:
   - component: {fileID: 33095770907850914}
   - component: {fileID: 23796528863800450}
   - component: {fileID: 64014560054854088}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: YZ Back
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -338,7 +338,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4558921940080322}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: XY
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -356,7 +356,7 @@ GameObject:
   - component: {fileID: 33907507160141710}
   - component: {fileID: 23989080531296526}
   - component: {fileID: 64724774202658874}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: XY Back
   m_TagString: Untagged
   m_Icon: {fileID: 0}
