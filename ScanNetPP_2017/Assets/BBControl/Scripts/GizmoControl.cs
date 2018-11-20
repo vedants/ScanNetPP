@@ -52,6 +52,9 @@ public class GizmoControl : MonoBehaviour {
             toolToPrefab.Add(tools[i], prefabs[i]);
             toolToButton.Add(tools[i], buttons[i]);
         }
+
+        EnableTools();
+        
     }
 
     private void Update() {
@@ -172,6 +175,7 @@ public class GizmoControl : MonoBehaviour {
     }
 
     protected void HandleStructureARGameEvent(object sender, GameEventArgs args) {
+        /*
         bool newToolsEnabled = toolsEnabled;
         switch (args.gameState) {
             case SensorState.DeviceNotReady:
@@ -181,7 +185,7 @@ public class GizmoControl : MonoBehaviour {
             case SensorState.Playing:
             case SensorState.Reset:
             case SensorState.WaitingForMesh:
-                newToolsEnabled = false;
+                newToolsEnabled = true;
                 break;
             case SensorState.Scanning:
                 newToolsEnabled = true;
@@ -199,6 +203,7 @@ public class GizmoControl : MonoBehaviour {
         }
 
         toolsEnabled = newToolsEnabled;
+        */ 
     }
 
     private void EnableTools() {
