@@ -80,11 +80,17 @@ public class GizmoControl : MonoBehaviour {
                 if (currentTool == Tool.POSITION || currentTool == Tool.ROTATION || currentTool == Tool.SCALE) {
                     CleanupToolOnObj();
                 }
+
+                cakeslice.Outline outline = selectedObj.GetComponent<cakeslice.Outline>();
+                outline.color = 0;
                 selectedObj = null;
             }
 
             if (setupRequired) {
                 selectedObj = obj;
+                cakeslice.Outline outline = selectedObj.GetComponent<cakeslice.Outline>();
+                outline.color = 1;
+
                 if (currentTool == Tool.POSITION || currentTool == Tool.ROTATION || currentTool == Tool.SCALE) {
                     SetupToolOnObj(selectedObj, currentTool);
                 }
