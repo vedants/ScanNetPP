@@ -6,8 +6,8 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 0
-    path: Assets/Scenes/SampleScene.unity
-    guid: 99c9720ab356a0642a771bea13969a05
+    path: 
+    guid: 00000000000000000000000000000000
   - enabled: 0
     path: Assets/StructureUnityAR/Samples/Fetch/Scenes/Fetch.unity
     guid: 7dd478a78e4a843158ee26ecb55a16f9
@@ -17,6 +17,9 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/StructureUnityAR/Samples/Simple/Scenes/Simple.unity
     guid: bf0a9faaa20f6451ba5d21a50336c996
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/ScanScene.unity
     guid: 58ed0900c185d49dcb2b030a8b69b877
+  - enabled: 1
+    path: Assets/Scenes/SampleScene.unity
+    guid: 2f9c81494db9e614b9d3ba64157ccb36

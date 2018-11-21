@@ -7,7 +7,7 @@ using StructureAR;
 public class GizmoControl : MonoBehaviour {
 
     public static GizmoControl instance;
-    public enum Tool { POSITION, ROTATION, SCALE, ADD, REMOVE, NONE };
+    public enum Tool { POSITION, ROTATION, SCALE, ADD, REMOVE, TEXT, NONE };
 
     public static string GIZMO_LAYER_NAME = "Gizmo";
     public static string BOUNDING_BOX_TAG = "BoundingBox";
@@ -15,17 +15,21 @@ public class GizmoControl : MonoBehaviour {
     public static int GIZMO_LAYER_MASK;
     public static float MAX_DISTANCE = 100;
 
+    [Header("General")]
     public bool forceActive;
     public GameObject selectedObj;
     public Tool currentTool;
     public Color selectedColor;
     public Color storedColor;
+    public GameObject labelPanel;
 
+    [Header("Gizmos")]
     public string[] names;
     public Tool[] tools;
     public GameObject[] prefabs;
     public Button[] buttons;
 
+    // Private gizmo/tool variables
     private int gizmoLayer;
     private bool toolsEnabled;
     private Dictionary<string, Tool> nameToTool = new Dictionary<string, Tool>();
@@ -34,19 +38,25 @@ public class GizmoControl : MonoBehaviour {
     private GameObject toolPrefab;
     private GameObject toolObj;
 
+    // Label panel variables
+    private InputField labelField;
+
     private void Start() {
+        // Singleton setup
         if (instance == null) {
             instance = this;
         } else if (instance != this) {
             Destroy(this);
         }
 
+        // Event manager for scanning
+        Manager.StructureARGameEvent += HandleStructureARGameEvent;
+
+        // Variable initialization
+        labelField = labelPanel.transform.Find("InputField").GetComponent<InputField>();
         GIZMO_LAYER = LayerMask.NameToLayer(GIZMO_LAYER_NAME);
         GIZMO_LAYER_MASK = LayerMask.GetMask(GIZMO_LAYER_NAME);
         currentTool = Tool.NONE;
-
-        Manager.StructureARGameEvent += HandleStructureARGameEvent;
-
         for (int i = 0; i < names.Length; i++) {
             nameToTool.Add(names[i], tools[i]);
             toolToPrefab.Add(tools[i], prefabs[i]);
@@ -54,7 +64,6 @@ public class GizmoControl : MonoBehaviour {
         }
 
         EnableTools();
-        
     }
 
     private void Update() {
@@ -77,25 +86,37 @@ public class GizmoControl : MonoBehaviour {
             }
 
             if (cleanupRequired && selectedObj != null) {
-                if (currentTool == Tool.POSITION || currentTool == Tool.ROTATION || currentTool == Tool.SCALE) {
-                    CleanupToolOnObj();
-                }
-
-                cakeslice.Outline outline = selectedObj.GetComponent<cakeslice.Outline>();
-                outline.color = 0;
-                selectedObj = null;
+                CleanupObj();
             }
 
             if (setupRequired) {
-                selectedObj = obj;
-                cakeslice.Outline outline = selectedObj.GetComponent<cakeslice.Outline>();
-                outline.color = 1;
-
-                if (currentTool == Tool.POSITION || currentTool == Tool.ROTATION || currentTool == Tool.SCALE) {
-                    SetupToolOnObj(selectedObj, currentTool);
-                }
+                SetupObj(obj);
             }
         }
+    }
+
+    /**
+     * Select an object. Set variables, outlines, and (if applicable) setup gizmo tools.
+     */
+    public void SetupObj(GameObject obj) {
+        selectedObj = obj;
+        cakeslice.Outline outline = selectedObj.GetComponent<cakeslice.Outline>();
+        outline.color = 1;
+        if (currentTool != Tool.ADD && currentTool != Tool.REMOVE) {
+            SetupToolOnObj(selectedObj, currentTool);
+        }
+    }
+
+    /**
+     * Cleanup an object. Set variables, outlines, and (if applicable) cleanup gizmo tools.
+     */
+    public void CleanupObj() {
+        if (currentTool != Tool.ADD && currentTool != Tool.REMOVE) {
+            CleanupToolOnObj();
+        }
+        cakeslice.Outline outline = selectedObj.GetComponent<cakeslice.Outline>();
+        outline.color = 0;
+        selectedObj = null;
     }
 
     /**
@@ -169,6 +190,11 @@ public class GizmoControl : MonoBehaviour {
                     scaleControl.LinkObject(selectedObj);
                 }
                 break;
+            case Tool.TEXT:
+                if (selectedObj != null) {
+                    labelPanel.SetActive(true);
+                }
+                break;
         }
     }
 
@@ -176,8 +202,19 @@ public class GizmoControl : MonoBehaviour {
      * Clean-up and remove the given tool from the given GameObject.
      */
     private void CleanupToolOnObj() {
-        Destroy(toolObj);
-        toolObj = null;
+        switch (currentTool) {
+            case Tool.ADD:
+            case Tool.REMOVE:
+            case Tool.POSITION:
+            case Tool.ROTATION:
+            case Tool.SCALE:
+                Destroy(toolObj);
+                toolObj = null;
+                break;
+            case Tool.TEXT:
+                labelPanel.SetActive(false);
+                break;
+        }
     }
 
     protected void HandleStructureARGameEvent(object sender, GameEventArgs args) {
@@ -226,5 +263,19 @@ public class GizmoControl : MonoBehaviour {
         foreach (Button button in toolToButton.Values) {
             button.interactable = false;
         }
+    }
+
+    /**
+     * Called when the user clicks on the 'Submit' button in the panel that
+     * appears with the 'text' tool selected.
+     */
+    public void OnClickLabelPanelSubmit() {
+        if (selectedObj == null) {
+            Debug.LogWarning("Selected obj was null when submit button was pressed. This should not happen.");
+            return;
+        }
+
+        BBState state = selectedObj.GetComponent<BBState>();
+        state.label = labelField.text.ToLower();
     }
 }
