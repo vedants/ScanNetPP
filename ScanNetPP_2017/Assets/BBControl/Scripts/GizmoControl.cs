@@ -22,6 +22,7 @@ public class GizmoControl : MonoBehaviour {
     public Color selectedColor;
     public Color storedColor;
     public GameObject labelPanel;
+    public Transform boundingBoxParent;
 
     [Header("Gizmos")]
     public string[] names;

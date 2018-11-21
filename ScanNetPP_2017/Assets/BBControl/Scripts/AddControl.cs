@@ -13,6 +13,7 @@ public class AddControl : MonoBehaviour {
             Vector3 position = Camera.main.transform.position + Camera.main.transform.forward * SPAWN_DISTANCE;
             GameObject boundingBox = Instantiate(boundingBoxPrefab, position, Quaternion.identity);
             boundingBox.name = boundingBoxPrefab.name;
+            boundingBox.transform.SetParent(GizmoControl.instance.boundingBoxParent);
             GizmoControl.instance.SetupObj(boundingBox);
         }
 	}
