@@ -7,6 +7,9 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using System.Text;
+using UnityEngine.Networking;
+using UnityExtension;
 
 namespace StructureAR
 {
@@ -242,6 +245,7 @@ namespace StructureAR
                     break;
 
                 case SensorState.WaitingForMesh: // WaitingForMesh -> Playing
+                    UploadScannedMesh();
                     break;
 
                 case SensorState.Playing: // Playing -> DeviceReady
@@ -402,6 +406,37 @@ namespace StructureAR
             {
                 this.scanObject.GetComponent<Wireframe>().ClearMesh();
 				this.structureObjectLoader.ClearMesh (this.scanObject);
+            }
+        }
+
+
+        protected virtual void UploadScannedMesh()
+        {
+            if (this.scanObject != null)
+            {
+                StringBuilder sBuilder = new StringBuilder();
+                //encode mesh in Wavefront .obj format
+                var OBJData = this.scanObject.GetComponent<MeshFilter>().mesh.EncodeOBJ();
+                //serialize obj data to string
+                OBJLoader.ExportOBJ(OBJData, sBuilder);
+                //send to webserver
+                StartCoroutine(SendMsgOverNetwork(sBuilder.ToString()));
+            }
+        }
+
+        private IEnumerator SendMsgOverNetwork(string msg) {
+            string url = "http://scannetpp.pythonanywhere.com/upload_mesh";
+            //byte[] msg_utf8 = System.Text.Encoding.UTF8.GetBytes(msg);
+            UnityWebRequest www = UnityWebRequest.Post(url, msg);
+            www.SetRequestHeader("Content-Type", "application/text");
+
+            yield return www.SendWebRequest();
+
+            if(www.isNetworkError || www.isHttpError) {
+                Debug.Log(www.error);
+            }
+            else {
+                Debug.Log("Mesh upload complete!");
             }
         }
     }

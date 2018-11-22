@@ -219,7 +219,7 @@ public class GizmoControl : MonoBehaviour {
     }
 
     protected void HandleStructureARGameEvent(object sender, GameEventArgs args) {
-        /*
+        
         bool newToolsEnabled = toolsEnabled;
         switch (args.gameState) {
             case SensorState.DeviceNotReady:
@@ -236,6 +236,7 @@ public class GizmoControl : MonoBehaviour {
                 break;
         }
 
+        /*
         if (forceActive) {
             newToolsEnabled = true;
         }
