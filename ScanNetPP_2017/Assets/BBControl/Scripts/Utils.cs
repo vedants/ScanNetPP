@@ -216,4 +216,58 @@ public class Utils : MonoBehaviour {
         }
         return false;
     }
+
+         public static Vector3 ParseVector3String(string sVector) {
+         // Remove the parentheses
+         if (sVector.StartsWith ("(") && sVector.EndsWith (")")) {
+             sVector = sVector.Substring(1, sVector.Length-2);
+         }
+ 
+         // split the items
+         string[] sArray = sVector.Split(' ');
+ 
+         // store as a Vector3
+         Vector3 result = new Vector3(
+             float.Parse(sArray[0]),
+             float.Parse(sArray[1]),
+             float.Parse(sArray[2]));
+ 
+         return result;
+     }
+
+     public static Vector2 ParseVector2String(string sVector) {
+         // Remove the parentheses
+         if (sVector.StartsWith ("(") && sVector.EndsWith (")")) {
+             sVector = sVector.Substring(1, sVector.Length-2);
+         }
+ 
+         // split the items
+         string[] sArray = sVector.Split(' ');
+ 
+         // store as a Vector2
+         Vector2 result = new Vector2(
+             float.Parse(sArray[0]),
+             float.Parse(sArray[1]));
+         return result;
+     }
+
+     public static Vector4 ParseVector4String(string sVector) {
+         // Remove the parentheses
+         if (sVector.StartsWith ("(") && sVector.EndsWith (")")) {
+             sVector = sVector.Substring(1, sVector.Length-2);
+         }
+ 
+         // split the items
+         string[] sArray = sVector.Split(' ');
+ 
+         // store as a Vector4
+         Vector4 result = new Vector4(
+             float.Parse(sArray[0]),
+             float.Parse(sArray[1]),
+             float.Parse(sArray[2]),
+             float.Parse(sArray[3]));
+ 
+         return result;
+     }
+
 }
