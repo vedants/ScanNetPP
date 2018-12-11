@@ -23,6 +23,7 @@ public class GizmoControl : MonoBehaviour {
     public Color storedColor;
     public GameObject labelPanel;
     public Transform boundingBoxParent;
+    public RectTransform boundingBox2DParent;
 
     [Header("Gizmos")]
     public string[] names;
@@ -154,7 +155,7 @@ public class GizmoControl : MonoBehaviour {
     /**
      * Set the color of a button.
      */
-    private void SetColor(Button button, Color color) {
+    public void SetColor(Button button, Color color) {
         ColorBlock colors = button.colors;
         colors.normalColor = color;
         colors.highlightedColor = color;

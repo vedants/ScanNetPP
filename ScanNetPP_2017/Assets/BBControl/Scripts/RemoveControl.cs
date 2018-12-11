@@ -11,6 +11,7 @@ public class RemoveControl : MonoBehaviour {
             if (Physics.Raycast(ray, out hit, Mathf.Infinity)) {
                 GameObject obj = hit.collider.gameObject;
                 if (obj.CompareTag(GizmoControl.BOUNDING_BOX_TAG)) {
+                    Destroy(obj.GetComponent<BBState>().linked2DBoundingBox);
                     Destroy(obj);
                     GizmoControl.instance.selectedObj = null;
                 }

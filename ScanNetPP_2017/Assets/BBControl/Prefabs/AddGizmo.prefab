@@ -53,3 +53,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   boundingBoxPrefab: {fileID: 1012785483870778, guid: e70e9d3a9e29d44c7a41718a21eef0c0,
     type: 2}
+  boundingBox2DPrefab: {fileID: 1816580097778724, guid: a8d421182b9714c42b383353b51b4f1d,
+    type: 2}

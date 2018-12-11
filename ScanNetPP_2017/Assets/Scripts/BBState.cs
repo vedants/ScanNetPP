@@ -5,4 +5,5 @@ using UnityEngine;
 public class BBState : MonoBehaviour {
 
     public string label;
+    public GameObject linked2DBoundingBox;
 }
