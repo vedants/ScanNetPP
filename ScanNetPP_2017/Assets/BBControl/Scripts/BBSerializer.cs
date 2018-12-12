@@ -4,6 +4,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
+[Serializable]
+public class BBInfo {
+    public Vector3 position;
+    public Vector3 rotation;
+    public Vector3 scale;
+    public string label;
+}
+
+[Serializable]
+public class BBList {
+    public BBInfo[] boundingBoxes;
+}
+
 /**
  * Takes bounding box transform data and writes it to a JSON file.
  */
@@ -11,18 +24,7 @@ public class BBSerializer : MonoBehaviour {
 
     public static string PARENT_NAME = "BoundingBoxes";
 
-    [Serializable]
-    public class BBInfo {
-        public Vector3 position;
-        public Vector3 rotation;
-        public Vector3 scale;
-        public string label;
-    }
-
-    [Serializable]
-    public class BBList {
-        public BBInfo[] boundingBoxes;
-    }
+    public GameObject boundingBoxPrefab;
 
     public void Update() {
         if (Input.GetKeyDown(KeyCode.S)) {
@@ -88,5 +90,4 @@ public class BBSerializer : MonoBehaviour {
             Debug.Log("Bounding box data upload complete!");
         }
     }
-
 }
