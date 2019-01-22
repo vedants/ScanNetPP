@@ -8,6 +8,7 @@ public class PositionControl : MonoBehaviour {
     public static Vector3 YZ_NORMAL = Vector3.right;
     public static Vector3 XY_NORMAL = Vector3.forward;
 
+    public bool localCoordinates = true;
     public float scaleFactor;
     public Material selectedMat;
 
@@ -26,6 +27,9 @@ public class PositionControl : MonoBehaviour {
      */
     public void LinkObject(GameObject obj) {
         linkedObj = obj;
+        if (localCoordinates) {
+            transform.rotation = obj.transform.rotation;
+        }
         ResizeGizmo();
     }
 
@@ -39,7 +43,7 @@ public class PositionControl : MonoBehaviour {
             RaycastHit[] hits;
             hits = Physics.RaycastAll(ray, Mathf.Infinity, GizmoControl.GIZMO_LAYER_MASK, QueryTriggerInteraction.Collide);
             foreach (RaycastHit hit in hits) {
-                Mode mode = Utils.FindModeFromObj(objModeMapping, hit.collider.gameObject);
+                Mode mode = BBUtils.FindModeFromObj(objModeMapping, hit.collider.gameObject);
                 if (mode == Mode.X || mode == Mode.Y || mode == Mode.Z) {
                     storedMode = mode;
                     storedGizmoObj = hit.collider.gameObject;
@@ -53,13 +57,13 @@ public class PositionControl : MonoBehaviour {
 
             if (storedMode != Mode.NONE) {
                 storedPosition = transform.position;
-                Utils.GetProjectedPosition(InputManager.instance.position, transform.position, storedMode, out storedProjectedPosition);
-                storedMat = Utils.ChangeSiblingMaterial(storedGizmoObj, selectedMat);
+                BBUtils.GetProjectedPosition(InputManager.instance.position, transform.position, storedMode, out storedProjectedPosition, transform);
+                storedMat = BBUtils.ChangeSiblingMaterial(storedGizmoObj, selectedMat);
                 moving = true;
             }
         } else if (InputManager.instance.touching && moving) {
             Vector3 targetProjectedPosition;
-            bool success = Utils.GetProjectedPosition(InputManager.instance.position, transform.position, storedMode, out targetProjectedPosition);
+            bool success = BBUtils.GetProjectedPosition(InputManager.instance.position, transform.position, storedMode, out targetProjectedPosition, transform);
             if (success) {
                 Vector3 newPosition = storedPosition + (targetProjectedPosition - storedProjectedPosition);
                 if ((newPosition - storedPosition).sqrMagnitude <= GizmoControl.MAX_DISTANCE * GizmoControl.MAX_DISTANCE) {
@@ -70,7 +74,7 @@ public class PositionControl : MonoBehaviour {
             }
         } else if (InputManager.instance.touchUp && moving) {
             storedMode = Mode.NONE;
-            Utils.ChangeSiblingMaterial(storedGizmoObj, storedMat);
+            BBUtils.ChangeSiblingMaterial(storedGizmoObj, storedMat);
             storedGizmoObj = null;
             moving = false;
         }

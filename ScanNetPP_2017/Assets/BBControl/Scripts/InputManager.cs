@@ -40,7 +40,7 @@ public class InputManager : MonoBehaviour {
 #endif
         if (touchDown) {
             foreach (RectTransform rt in uiRectTransforms) {
-                if (Utils.IsPointInRT(position, rt)) {
+                if (BBUtils.IsPointInRT(position, rt)) {
                     touchDownUI = true;
                     break;
                 }

@@ -10,11 +10,12 @@ public struct ObjectToMode {
     public Mode mode;
 }
 
-public class Utils : MonoBehaviour {
+public class BBUtils : MonoBehaviour {
 
     public static Vector3 XZ_NORMAL = Vector3.up;
     public static Vector3 YZ_NORMAL = Vector3.right;
     public static Vector3 XY_NORMAL = Vector3.forward;
+    public static Transform DEFAULT_TRANSFORM = new GameObject().transform;
 
     /**
      * Check the mapping if the provided GameObject has an associated mode.
@@ -32,34 +33,39 @@ public class Utils : MonoBehaviour {
      * Given a screen position on a plane or axis, return true iff a
      * 3D intersection point can be found between the projected ray
      * from the camera to the screen position and the plane/axis.
+     * Axes are defined by the root transform, or world coordinates.
      * If successful, puts the output position in targetPosition.
      */
-    public static bool GetProjectedPosition(Vector3 screenPosition, Vector3 origin, Mode mode, out Vector3 projectedPosition) {
+    public static bool GetProjectedPosition(Vector3 screenPosition, Vector3 origin, Mode mode, out Vector3 projectedPosition, Transform root = null) {
+        if (root == null) {
+            root = DEFAULT_TRANSFORM;
+        }
+
         if (mode == Mode.X || mode == Mode.Y || mode == Mode.Z) {
-            return GetAxisProjection(screenPosition, origin, mode, out projectedPosition);
+            return GetAxisProjection(screenPosition, root, origin, mode, out projectedPosition);
         }
         else {
-            return GetPlaneProjection(screenPosition, origin, mode, out projectedPosition);
+            return GetPlaneProjection(screenPosition, root, origin, mode, out projectedPosition);
         }
     }
 
     /**
      * GetProjectedPosition, but restricted to the plane case.
      */
-    public static bool GetPlaneProjection(Vector3 screenPosition, Vector3 origin, Mode mode, out Vector3 projectedPosition) {
+    public static bool GetPlaneProjection(Vector3 screenPosition, Transform root, Vector3 origin, Mode mode, out Vector3 projectedPosition) {
         Camera cam = Camera.main;
         Ray ray = cam.ScreenPointToRay(screenPosition);
 
         float t = -1;
         switch (mode) {
             case Mode.XZ:
-                t = GetLineToPlaneIntersectionParameter(origin, XZ_NORMAL, ray.origin, ray.direction);
+                t = GetLineToPlaneIntersectionParameter(origin, root.up, ray.origin, ray.direction);
                 break;
             case Mode.YZ:
-                t = GetLineToPlaneIntersectionParameter(origin, YZ_NORMAL, ray.origin, ray.direction);
+                t = GetLineToPlaneIntersectionParameter(origin, root.right, ray.origin, ray.direction);
                 break;
             case Mode.XY:
-                t = GetLineToPlaneIntersectionParameter(origin, XY_NORMAL, ray.origin, ray.direction);
+                t = GetLineToPlaneIntersectionParameter(origin, root.forward, ray.origin, ray.direction);
                 break;
             default:
                 Debug.Log("This should never happen. Invalid mode detected: " + mode);
@@ -78,20 +84,19 @@ public class Utils : MonoBehaviour {
     /**
      * GetProjectedPosition, but restricted to the axis case.
      */
-    public static bool GetAxisProjection(Vector3 screenPosition, Vector3 origin, Mode mode, out Vector3 projectedPosition) {
+    public static bool GetAxisProjection(Vector3 screenPosition, Transform root, Vector3 origin, Mode mode, out Vector3 projectedPosition) {
         Vector3 normal, axis;
+        normal = Camera.main.transform.forward;
+
         switch (mode) {
             case Mode.X:
-                normal = XZ_NORMAL;
-                axis = Vector3.right;
+                axis = root.right;
                 break;
             case Mode.Y:
-                normal = XY_NORMAL;
-                axis = Vector3.up;
+                axis = root.up;
                 break;
             case Mode.Z:
-                normal = XZ_NORMAL;
-                axis = Vector3.forward;
+                axis = root.forward;
                 break;
             default:
                 Debug.Log("This should never happen. Invalid mode detected: " + mode);

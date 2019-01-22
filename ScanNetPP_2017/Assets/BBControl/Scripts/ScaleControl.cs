@@ -36,15 +36,15 @@ public class ScaleControl : MonoBehaviour {
                 storedGizmoObj = hit.collider.gameObject;
                 storedPosition = storedGizmoObj.transform.position;
                 storedInversePosition = transform.position - (storedPosition - transform.position);
-                storedMode = Utils.FindModeFromObj(objModeMapping, hit.collider.gameObject);
-                GetAxisProjection(out storedProjectedPosition);
+                storedMode = BBUtils.FindModeFromObj(objModeMapping, hit.collider.gameObject);
+                BBUtils.GetProjectedPosition(InputManager.instance.position, transform.position, storedMode, out storedProjectedPosition, transform);
                 storedMat = storedGizmoObj.GetComponent<Renderer>().material;
                 storedGizmoObj.GetComponent<Renderer>().material = selectedMat;
                 scaling = true;
             }
         } else if (InputManager.instance.touching && scaling) {
             Vector3 targetProjectedPosition;
-            bool success = GetAxisProjection(out targetProjectedPosition);
+            bool success = BBUtils.GetProjectedPosition(InputManager.instance.position, transform.position, storedMode, out targetProjectedPosition, transform);
             if (success) {
                 Vector3 newPosition = storedPosition + (targetProjectedPosition - storedProjectedPosition);
                 if ((newPosition - storedPosition).sqrMagnitude > GizmoControl.MAX_DISTANCE * GizmoControl.MAX_DISTANCE) {
@@ -108,38 +108,6 @@ public class ScaleControl : MonoBehaviour {
                     break;
             }
         }
-    }
-
-    /**
-     * Gets the axis projection for the stored variables (mode, position, etc.)
-     * and puts it into projectedPosition. Returns true iff successful.
-     */
-    private bool GetAxisProjection(out Vector3 projectedPosition) {
-        Vector3 normal, axis = Vector3.zero;
-        switch (storedMode) {
-            case Mode.X:
-                normal = transform.TransformDirection(Vector3.up);
-                axis = transform.TransformDirection(Vector3.right);
-                break;
-            case Mode.Y:
-                normal = transform.TransformDirection(Vector3.right);
-                axis = transform.TransformDirection(Vector3.up);
-                break;
-            case Mode.Z:
-                normal = transform.TransformDirection(Vector3.right);
-                axis = transform.TransformDirection(Vector3.forward);
-                break;
-            default:
-                projectedPosition = Vector3.zero;
-                return false;
-        }
-
-        return Utils.PerformAxisProjection(
-                InputManager.instance.position,
-                transform.position,
-                normal,
-                axis,
-                out projectedPosition);
     }
 
     private void ResizeGizmo() {

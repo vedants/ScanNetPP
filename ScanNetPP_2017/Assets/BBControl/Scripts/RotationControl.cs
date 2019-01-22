@@ -35,7 +35,7 @@ public class RotationControl : MonoBehaviour {
 
                 // Project collison hit point to plane of rotation
                 planeNormal = storedGizmoObj.transform.TransformDirection(Vector3.up);
-                Vector3 origin3D = Utils.GetPointToPlaneClosestPoint(hit.point, transform.position, planeNormal);
+                Vector3 origin3D = BBUtils.GetPointToPlaneClosestPoint(hit.point, transform.position, planeNormal);
 
                 // Compute tangent 3D line
                 Vector3 dir3D = Vector3.Cross(origin3D - transform.position, planeNormal).normalized;
@@ -48,12 +48,12 @@ public class RotationControl : MonoBehaviour {
                 lineOrigin = origin2D;
                 lineDir = dir2D;
 
-                storedMat = Utils.ChangeSiblingMaterial(storedGizmoObj, selectedMat);
+                storedMat = BBUtils.ChangeSiblingMaterial(storedGizmoObj, selectedMat);
                 rotating = true;
             }
         } else if (InputManager.instance.touching && rotating) {
             // Project touch position to line
-            Vector2 pos = Utils.ProjectPointToLine(InputManager.instance.position, lineOrigin, lineDir);
+            Vector2 pos = BBUtils.ProjectPointToLine(InputManager.instance.position, lineOrigin, lineDir);
 
             // Compute rotation amount based off of distance from lineOrigin
             float distance = Vector2.Distance(pos, lineOrigin);
@@ -66,7 +66,7 @@ public class RotationControl : MonoBehaviour {
             transform.rotation = startingRotation;
             transform.RotateAround(transform.position, planeNormal, angle);
         } else if (InputManager.instance.touchUp && rotating) {
-            Utils.ChangeSiblingMaterial(storedGizmoObj, storedMat);
+            BBUtils.ChangeSiblingMaterial(storedGizmoObj, storedMat);
             storedGizmoObj = null;
             storedMat = null;
             rotating = false;
