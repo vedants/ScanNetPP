@@ -86,7 +86,6 @@ public class BBUtils : MonoBehaviour {
      */
     public static bool GetAxisProjection(Vector3 screenPosition, Transform root, Vector3 origin, Mode mode, out Vector3 projectedPosition) {
         Vector3 normal, axis;
-        normal = Camera.main.transform.forward;
 
         switch (mode) {
             case Mode.X:
@@ -103,6 +102,9 @@ public class BBUtils : MonoBehaviour {
                 projectedPosition = Vector3.zero;
                 return false;
         }
+
+        Vector3 projectedCamOnAxis = Vector3.Project(Camera.main.transform.forward, axis);
+        normal = (Camera.main.transform.forward - projectedCamOnAxis).normalized;
 
         return PerformAxisProjection(screenPosition, origin, normal, axis, out projectedPosition);
     }
