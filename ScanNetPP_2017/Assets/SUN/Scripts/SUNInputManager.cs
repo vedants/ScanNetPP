@@ -96,7 +96,7 @@ public class SUNInputManager : MonoBehaviour {
         switch (s2Clicks) {
             case 0:
                 if (stack.Count > 0) {
-                    stack[stack.Count - 1].layer = 0;
+                    stack[stack.Count - 1].layer = 12;
                 }
 
                 line1 = Instantiate(linePrefab);
