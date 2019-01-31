@@ -125,7 +125,10 @@ public class SUNInputManager : MonoBehaviour {
                 g.transform.position = origin + v1 / 2 + v2 / 2;
                 g.transform.forward = -v2; // 1st line segment is set as the front
                 g.transform.localScale = new Vector3(v1.magnitude, 1, v2.magnitude);
-                g.AddComponent<BoundBox>().lineColor = colors[colorIndex];
+                // Have the set alpha to < 1 to work around the weirdest bug. If alph = 1 the top right camera will fail to see the outline
+                // until a reload happens or the alpha changes. No clue what is going on there since they're all the same camera AND it
+                // only happens on my laptop.
+                g.AddComponent<BoundBox>().lineColor = new Color(colors[colorIndex].r, colors[colorIndex].g, colors[colorIndex].b, 0.5f);
                 colorIndex = (colorIndex + 1) % colors.Length;
                 g.GetComponent<BoundBox>().permanent = true;
 
