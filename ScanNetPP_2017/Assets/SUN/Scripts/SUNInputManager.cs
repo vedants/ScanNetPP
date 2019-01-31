@@ -26,6 +26,7 @@ public class SUNInputManager : MonoBehaviour {
     Camera camInUse;
     Transform tInUse;
     List<GameObject> stack = new List<GameObject>();
+    private int colorIndex = 0;
 
     private void Start() {
         BOUNDING_BOX_LAYER = LayerMask.GetMask(BOUNDING_BOX_LAYER_NAME);
@@ -94,6 +95,10 @@ public class SUNInputManager : MonoBehaviour {
         p.y = 0;
         switch (s2Clicks) {
             case 0:
+                if (stack.Count > 0) {
+                    stack[stack.Count - 1].layer = 0;
+                }
+
                 line1 = Instantiate(linePrefab);
                 ren1 = line1.GetComponent<LineRenderer>();
                 ren1.positionCount = 2;
@@ -120,7 +125,9 @@ public class SUNInputManager : MonoBehaviour {
                 g.transform.position = origin + v1 / 2 + v2 / 2;
                 g.transform.forward = -v2; // 1st line segment is set as the front
                 g.transform.localScale = new Vector3(v1.magnitude, 1, v2.magnitude);
-                g.AddComponent<BoundBox>().lineColor = colors[Random.Range(0, colors.Length)];
+                g.AddComponent<BoundBox>().lineColor = colors[colorIndex];
+                colorIndex = (colorIndex + 1) % colors.Length;
+                g.GetComponent<BoundBox>().permanent = true;
 
                 stack.Add(g);
                 S2Cleanup();
