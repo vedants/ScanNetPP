@@ -12,7 +12,7 @@ public class AddControl : MonoBehaviour {
 	private void Update () {
 		if (InputManager.instance.touchDown && !InputManager.instance.touchDownUI) {
             Vector3 position = Camera.main.transform.position + Camera.main.transform.forward * SPAWN_DISTANCE;
-            GameObject boundingBox = Instantiate(boundingBoxPrefab, position, Quaternion.identity);
+            GameObject boundingBox = Instantiate(boundingBoxPrefab, position, Quaternion.Euler(0, Camera.main.transform.eulerAngles.y, 0));
             boundingBox.name = boundingBoxPrefab.name;
             boundingBox.transform.SetParent(GizmoControl.instance.boundingBoxParent);
             GizmoControl.instance.SetupObj(boundingBox);
